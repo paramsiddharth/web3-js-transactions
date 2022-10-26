@@ -1,0 +1,21 @@
+{
+  "name": "blockchain",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {
+    "start": "ts-node index.ts",
+    "blockchain": "ganache -v -d --database.dbPath ./blk -i 344 -a 25",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Param Siddharth <contact@paramsid.com> (http://www.paramsid.com/)",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "ganache": "^7.5.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.8.4",
+    "web3": "^1.8.0"
+  }
+}
