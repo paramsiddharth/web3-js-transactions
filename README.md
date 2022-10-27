@@ -48,4 +48,11 @@ mvn package
 java -jar target/Web3Transactions-1.0-SNAPSHOT-jar-with-dependencies.jar
 ```
 
+### [Go-Ethereum](https://geth.ethereum.org/)
+Go-Ethereum is an Ethereum client for Go.
+```bash
+go mod download
+go run .
+```
+
 # Made with ❤ by [Param](https://www.paramsid.com).
