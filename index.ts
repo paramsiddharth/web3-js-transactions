@@ -16,14 +16,15 @@ if (!SELF || !PEER || !KEY || !THEFT) {
 	process.exit(1);
 }
 
-const web3 = new Web3(Web3.givenProvider ?? 'ws://localhost:8545');
+const web3 = new Web3(process.env.WEB3_PROVIDER ?? Web3.givenProvider ?? 'ws://localhost:8545');
 
-(async () => {
+async function main() {
 	try {
 
-		let count = 10;
-		while (count--) {
-			await makeTransaction(SELF, PEER, KEY, THEFT);
+		const count = 10;
+		for (let i = 1; i <= count; i++) {
+			console.log('\n--- Iteration', i, '---\n');
+			await makeTransaction(SELF!, PEER!, KEY!, THEFT!);
 		}
 
 	} catch (e: any) {
@@ -32,7 +33,7 @@ const web3 = new Web3(Web3.givenProvider ?? 'ws://localhost:8545');
 	}
 
 	process.exit();
-})();
+}
 
 async function makeTransaction(SELF: string, PEER: string, KEY: string, THEFT: string) {
 	console.log('--- Before transaction ---');
@@ -50,14 +51,14 @@ async function makeTransaction(SELF: string, PEER: string, KEY: string, THEFT: s
 	const to = spend ? PEER : SELF;
 	// const from = spend ? SELF : PEER;
 	const key = spend ? KEY : THEFT;
-	const gasPrice = +await web3.eth.getGasPrice();
+	const gasPrice = +web3.utils.fromWei(await web3.eth.getGasPrice(), 'ether');
 
-	console.log('Gas price:', gasPrice);
+	console.log('Gas price:', gasPrice, 'ETH');
 
 	const transaction = await web3.eth.accounts.signTransaction({
 		to,
 		value: toWei(amount),
-		gas: 21000
+		gas: 21_000
 	}, key);
 
 	if (transaction.rawTransaction == null) {
@@ -88,4 +89,8 @@ function toWei(val: number | BigInt | string | BN): string {
 		paramVal = val as (string | number);
 
 	return web3.utils.toWei(paramVal.toString(), 'ether').toString();
+}
+
+if (require.main === module) {
+	main();
 }
