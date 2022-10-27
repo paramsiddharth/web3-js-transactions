@@ -5,7 +5,9 @@
   "main": "index.ts",
   "scripts": {
     "start": "npm run start:web3.js",
+    "deps:web3.js": "npm ci",
     "start:web3.js": "ts-node index.ts",
+    "deps:web3.py": "pip install -r requirements.txt",
     "start:web3.py": "python app.py",
     "start:web3j": "cd java/Web3Transactions && java -jar target/Web3Transactions-1.0-SNAPSHOT-jar-with-dependencies.jar",
     "build:web3j": "cd java/Web3Transactions && mvn clean install && mvn package",
