@@ -7,6 +7,7 @@ import (
 	"math/big"
 	"math/rand"
 	"os"
+	"time"
 
 	"github.com/chenzhijie/go-web3"
 	"github.com/ethereum/go-ethereum/common"
@@ -18,6 +19,7 @@ import (
 
 func main() {
 	godotenv.Load()
+	rand.Seed(time.Now().UnixNano())
 
 	SELF := os.Getenv("WEB3_SELF_ADDRESS")
 	PEER := os.Getenv("WEB3_PEER_ADDRESS")
