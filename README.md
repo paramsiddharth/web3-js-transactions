@@ -26,7 +26,7 @@ Following are the instructions to run the application with different frameworks.
 ### [Web3.js](https://web3js.readthedocs.io/)
 Web3.js is an Ethereum client for JavaScript.
 ```bash
-npm run start:web3.js
+npx ts-node index.ts
 ```
 
 ### [Web3.py](https://web3py.readthedocs.io/)
