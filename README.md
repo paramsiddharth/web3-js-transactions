@@ -9,7 +9,7 @@ npx ganache -v -d --database.dbPath ./blk -i 344 -a 25
 ```
 
 Choose from the output and add the relevant variables to a `.env` file in the root.
-```bash
+```env
 # Required
 WEB3_SELF_ADDRESS="<your-address>"
 WEB3_SELF_KEY="<your-private-key>"
