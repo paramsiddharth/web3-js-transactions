@@ -1,8 +1,8 @@
 #![allow(non_snake_case)]
 
 use std::{env, fs, process, str::FromStr};
-use rand::{self, Rng};
 
+use rand::{self, Rng};
 use dotenv;
 use web3::{
 	transports,
