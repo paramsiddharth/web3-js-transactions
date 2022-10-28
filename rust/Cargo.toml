@@ -10,3 +10,5 @@ tokio = { version = "1", features = ["full"] }
 web3 = "0.17.0"
 dotenv = "0.15.0"
 rand = "0.8.5"
+hex = "0.4.3"
+ethereum-tx-sign = "6.0.1"

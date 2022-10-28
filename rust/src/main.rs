@@ -1,10 +1,12 @@
 #![allow(non_snake_case)]
 
-use std::{env, fs, process};
-use rand::{self, Rng, distributions::uniform::SampleRange};
+use std::{env, fs, process, convert::TryInto, io::Read};
+use rand::{self, Rng};
 
 use dotenv;
 use web3::{transports, Web3, types::{U256, H160}, Transport};
+use ethereum_tx_sign::{LegacyTransaction, Transaction};
+use hex;
 
 #[tokio::main]
 async fn main() -> web3::Result<()> {
@@ -76,7 +78,23 @@ async fn make_transaction<T: Transport>(
 
 	println!("Gas price: {gas_price} ETH");
 
-	// let transaction = web3.eth()
+	let tx = LegacyTransaction {
+		chain: 1,
+		nonce: 0,
+		// web3::types::Address::from_str(to).unwrap()
+		to: Some(hex::decode(&to[2..]).unwrap().as_slice().try_into().unwrap()),
+		value: to_wei(amount).as_u128(),
+		gas_price: web3.eth().gas_price().await.unwrap().low_u128(),
+		gas: 21000,
+		data: vec![]
+	};
+
+	let ecdsa = tx.ecdsa(hex::decode(&key[2..]).unwrap().as_slice()).unwrap();
+	let tx_bytes = tx.sign(&ecdsa);
+
+	let hash = web3.eth().send_raw_transaction(web3::types::Bytes(tx_bytes)).await.unwrap();
+
+	println!("Transaction: 0x{}", hex::encode(hash.as_bytes()));
 
 	println!("--- After transaction ---");
 
