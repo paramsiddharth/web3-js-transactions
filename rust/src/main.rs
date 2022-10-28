@@ -1,12 +1,17 @@
 #![allow(non_snake_case)]
 
-use std::{env, fs, process, convert::TryInto, io::Read};
+use std::{env, fs, process, str::FromStr};
 use rand::{self, Rng};
 
 use dotenv;
-use web3::{transports, Web3, types::{U256, H160}, Transport};
-use ethereum_tx_sign::{LegacyTransaction, Transaction};
+use web3::{
+	transports,
+	Web3,
+	types::{U256, H160, Address, TransactionParameters},
+	Transport
+};
 use hex;
+use secp256k1::SecretKey;
 
 #[tokio::main]
 async fn main() -> web3::Result<()> {
@@ -64,7 +69,7 @@ async fn make_transaction<T: Transport>(
 	println!("--- Transaction ---");
 
 	let spend = self_bal >= peer_bal;
-	let amount = rng.gen_range(0..1) as f64 * if spend { self_bal } else { peer_bal };
+	let amount = rng.gen_range(0.0..1.0) as f64 * if spend { self_bal } else { peer_bal };
 	let to = if spend { PEER } else { SELF };
 	// let from = if spend { SELF } else { PEER };
 	let key  = if spend { KEY } else { THEFT };
@@ -78,23 +83,23 @@ async fn make_transaction<T: Transport>(
 
 	println!("Gas price: {gas_price} ETH");
 
-	let tx = LegacyTransaction {
-		chain: 1,
-		nonce: 0,
-		// web3::types::Address::from_str(to).unwrap()
-		to: Some(hex::decode(&to[2..]).unwrap().as_slice().try_into().unwrap()),
-		value: to_wei(amount).as_u128(),
-		gas_price: web3.eth().gas_price().await.unwrap().low_u128(),
-		gas: 21000,
-		data: vec![]
+	let prvKey = SecretKey::from_str(&key[2..]).unwrap();
+
+	let tx = TransactionParameters {
+		to: Some(Address::from_str(to).unwrap()),
+		value: to_wei(amount),
+		..Default::default()
 	};
 
-	let ecdsa = tx.ecdsa(hex::decode(&key[2..]).unwrap().as_slice()).unwrap();
-	let tx_bytes = tx.sign(&ecdsa);
+	let signed = web3.accounts().sign_transaction(tx, &prvKey).await.ok()?;
 
-	let hash = web3.eth().send_raw_transaction(web3::types::Bytes(tx_bytes)).await.unwrap();
+	let hash = web3.eth().send_raw_transaction(signed.raw_transaction).await.ok()?;
 
+	println!("Amount: {} ETH", amount * if spend { -1.0 } else { 1.0 });
 	println!("Transaction: 0x{}", hex::encode(hash.as_bytes()));
+
+	let receipt = web3.eth().transaction_receipt(hash).await.ok()??;
+	println!("Block number: {}", receipt.block_number.unwrap());
 
 	println!("--- After transaction ---");
 
