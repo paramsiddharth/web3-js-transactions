@@ -13,6 +13,7 @@
     "start:web3j": "cd java/Web3Transactions && java -jar target/Web3Transactions-1.0-SNAPSHOT-jar-with-dependencies.jar",
     "deps:go-ethereum": "go mod download",
     "start:go-ethereum": "go run .",
+    "start:rust-web3": "cd rust && cargo run",
     "blockchain": "ganache -v -d --database.dbPath ./blk -i 344 -a 25",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
