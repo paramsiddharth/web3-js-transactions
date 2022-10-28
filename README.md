@@ -55,4 +55,11 @@ go mod download
 go run .
 ```
 
+### [Rust-Web3](https://docs.rs/web3/latest/web3//)
+Rust-Web3 is an Ethereum client for Rust.
+```bash
+cd rust
+cargo run
+```
+
 # Made with ❤ by [Param](https://www.paramsid.com).
